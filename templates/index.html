@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InstantLegal AI | Professional Legal Documents in Minutes</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="static/css/index.css">
+
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="static/js/index.js"></script>
+
+    
+    
+</head>
+<body>
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-icon">⚖️</div>
+            <h3 class="loading-title">Generating Your Legal Document</h3>
+            <p class="loading-subtitle">Our AI is crafting a custom document tailored to your needs.</p>
+            
+            <div class="loading-progress">
+                <div class="loading-progress-bar"></div>
+            </div>
+            
+            <div class="loading-catchphrase">
+                "Turning legal jargon into plain English..."
+            </div>
+            
+            <p class="loading-time">This may take up to 2 minutes. Thank you for your patience!</p>
+        </div>
+    </div>
+    
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">Instant<span>Legal</span>AI</a>
+                <a href="mailto:support@instantlegal.ai?subject=Refund%20Request&body=Please%20provide%20your%20order%20details%20and%20reason%20for%20refund%3A%0A%0AOrder%20ID%3A%0ADocument%20Type%3A%0AReason%3A" style="text-decoration: none;">
+                    <div class="guarantee-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        100% Money-Back Guarantee
+                    </div>
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>AI-Generated Legal Documents<br>Tailored to Your Business</h1>
+                    <p class="subtitle">Our AI technology creates custom legal documents instantly. No lawyers, no waiting, no excessive fees. Get exactly what you need in minutes, not days.</p>
+                    
+                    <div class="features">
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 13L9 17L19 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div>AI-Powered Customization for Your Specific Business</div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 13L9 17L19 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div>Instant Download - Ready in 2 Minutes</div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 13L9 17L19 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div>Save $500+ Compared to Traditional Legal Services</div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 13L9 17L19 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div>State-Specific Legal Compliance Built In</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-form">
+                    <h2 class="form-title">Generate Your Custom Legal Document</h2>
+                    
+                    <div class="special-offer-timer">
+                        <div class="timer-label">24-HOUR SPECIAL PRICE ENDS IN:</div>
+                        <div class="timer-display">
+                            <div class="timer-unit">
+                                <div class="timer-value" id="hours">07</div>
+                                <div class="timer-label">HOURS</div>
+                            </div>
+                            <div class="timer-unit">
+                                <div class="timer-value" id="minutes">23</div>
+                                <div class="timer-label">MINS</div>
+                            </div>
+                            <div class="timer-unit">
+                                <div class="timer-value" id="seconds">45</div>
+                                <div class="timer-label">SECS</div>
+                            </div>
+                        </div>
+                    </div>
+                    <form id="document-form" action="/generate-document" method="POST">
+                    <div class="form-group">
+                        <label for="document-type">Document Type</label>
+                        <select id="document-type" name="document_type" required>
+                            <option value="">Select document type...</option>
+                            {% for key, value in document_types.items() %}
+                            <option value="{{ key }}">{{ value }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="business-name">Business Name</label>
+                            <input type="text" id="business-name" name="business_name"  placeholder="Enter your business name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="business-type">Business Type</label>
+                            <select id="business-type" name="business_type" required>
+                                <option value="">Select business type...</option>
+                                <option value="Sole Proprietorship">Sole Proprietorship</option>
+                                <option value="LLC">LLC</option>
+                                <option value="Corporation">Corporation</option>
+                                <option value="Partnership">Partnership</option>
+                                <option value="Non-Profit">Non-Profit</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                   
+                    <div class="form-group">
+                        <label for="state">State/Union Territory</label>
+                        <select id="state" name="state" required>
+                            <option value="">Select state/UT...</option>
+                            <!-- Indian States -->
+                            <option value="Andhra Pradesh">Andhra Pradesh</option>
+                            <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                            <option value="Assam">Assam</option>
+                            <option value="Bihar">Bihar</option>
+                            <option value="Chhattisgarh">Chhattisgarh</option>
+                            <option value="Goa">Goa</option>
+                            <option value="Gujarat">Gujarat</option>
+                            <option value="Haryana">Haryana</option>
+                            <option value="Himachal Pradesh">Himachal Pradesh</option>
+                            <option value="Jharkhand">Jharkhand</option>
+                            <option value="Karnataka">Karnataka</option>
+                            <option value="Kerala">Kerala</option>
+                            <option value="Madhya Pradesh">Madhya Pradesh</option>
+                            <option value="Maharashtra">Maharashtra</option>
+                            <option value="Manipur">Manipur</option>
+                            <option value="Meghalaya">Meghalaya</option>
+                            <option value="Mizoram">Mizoram</option>
+                            <option value="Nagaland">Nagaland</option>
+                            <option value="Odisha">Odisha</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Rajasthan">Rajasthan</option>
+                            <option value="Sikkim">Sikkim</option>
+                            <option value="Tamil Nadu">Tamil Nadu</option>
+                            <option value="Telangana">Telangana</option>
+                            <option value="Tripura">Tripura</option>
+                            <option value="Uttar Pradesh">Uttar Pradesh</option>
+                            <option value="Uttarakhand">Uttarakhand</option>
+                            <option value="West Bengal">West Bengal</option>
+                    
+                            <!-- Indian Union Territories -->
+                            <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                            <option value="Chandigarh">Chandigarh</option>
+                            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                            <option value="Lakshadweep">Lakshadweep</option>
+                            <option value="Delhi">Delhi</option>
+                            <option value="Puducherry">Puducherry</option>
+                            <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                            <option value="Ladakh">Ladakh</option>
+                        </select>
+                    </div>
+                    
+                    
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <select id="industry" name="industry" required>
+                            <option value="">Select industry...</option>
+                            <option value="Technology/Software">Technology/Software</option>
+                            <option value="E-commerce/Retail">E-commerce/Retail</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Financial Services">Financial Services</option>
+                            <option value="Education">Education</option>
+                            <option value="Consulting">Consulting</option>
+                            <option value="Marketing/Advertising">Marketing/Advertising</option>
+                            <option value="Manufacturing">Manufacturing</option>
+                            <option value="Construction">Construction</option>
+                            <option value="Food Service">Food Service</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Document Protection Level</label>
+                        <input type="range" min="1" max="3" value="2" class="range-slider" id="protection-level" name="protection_level">
+                        <div class="slider-labels">
+                            <span>Standard</span>
+                            <span>Comprehensive</span>
+                            <span>Maximum</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Special Clauses (Optional)</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="clause-confidentiality" name="clause_confidentiality">
+                                <label for="clause-confidentiality">Enhanced Confidentiality</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="clause-arbitration" name="clause_arbitration">
+                                <label for="clause-arbitration">Arbitration Provision</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="clause-termination" name="clause_termination">
+                                <label for="clause-termination">Advanced Termination Options</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="clause-ip" name="clause_ip">
+                                <label for="clause-ip">Intellectual Property Protection</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="additional-instructions">Additional Instructions (Optional)</label>
+                        <textarea id="additional-instructions" name="additional_instructions" rows="4" placeholder="Enter any specific requirements, details, or custom clauses you'd like to include in your document..."></textarea>
+                    </div>
+                    
+                    <div class="pricing-section">
+                        
+                        
+                        <div class="price-features">
+                            <div class="price-feature">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 13L9 17L19 7" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Enhanced document customization
+                            </div>
+                            <div class="price-feature">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 13L9 17L19 7" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                PDF + Word formats
+                            </div>
+                            <div class="price-feature">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 13L9 17L19 7" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                1 free revision
+                            </div>
+                            <div class="price-feature">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 13L9 17L19 7" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Special clauses included
+                            </div>
+                        </div>
+                        <div class="limited-offer">Only 14 documents remaining at this price today!</div>
+                    </div>
+                    
+                    <div class="success-message" style="display: none;">Your document has been generated successfully!</div>
+                    <div class="error-message" style="display: none;">There was an error processing your request.</div>
+                    
+                    <!-- Modal for Preview -->
+<!-- Modal for Preview -->
+<div id="preview-modal" style="display: none;">
+    <div class="modal-content">
+        <h3>Preview Document</h3>
+        <div id="preview-text" contenteditable="true">Preview goes here...</div>
+        <button type="button" id="update-btn">Update</button>
+    </div>
+</div>
+
+<!-- Preview Button -->
+<button type="button" id="preview-btn" class="btn btn-primary">Preview</button>
+
+<!-- Form to generate the document -->
+<form id="document-form">
+    <!-- Form fields for document generation -->
+    <textarea name="document_content" style="display:none;"></textarea>
+    <button type="submit" id="generate-btn" class="submit-btn">Generate Document Now</button>
+</form>
+
+                    </form>
+                   
+
+                </div>
+            </div>
+            
+        </div>
+    </section>
+    
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">Our AI-powered system creates professional legal documents in just minutes</p>
+            
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Select Document Type</h3>
+                    <p>Choose from our library of professional legal documents</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Enter Your Details</h3>
+                    <p>Provide your business information and requirements</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>AI Customization</h3>
+                    <p>Our AI tailors the document to your specific needs</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Download & Use</h3>
+                    <p>Get your document instantly and ready to use</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- The InstantLegal AI Advantage Section -->
+    <section class="advantages">
+        <div class="container">
+            <h2 class="section-title">The InstantLegal AI Advantage</h2>
+            
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 4V20M20 12H4" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Save Thousands in Legal Fees</h3>
+                    <p>Our AI-generated documents cost a fraction of what lawyers charge. Get the same quality without the hefty price tag.</p>
+                </div>
+                
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Ready in 2 Minutes</h3>
+                    <p>No waiting days or weeks for a lawyer to draft your document. Our AI generates it instantly, ready for immediate use.</p>
+                </div>
+                
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>State-Specific Legal Compliance</h3>
+                    <p>All documents are created following current legal standards for your specific state, providing you with the protection you need.</p>
+                </div>
+                
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Industry-Specific Customization</h3>
+                    <p>Not a generic template. Each document is tailored to your specific industry, business type, and requirements.</p>
+                </div>
+                
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Plain Language</h3>
+                    <p>No complex legal jargon. Our documents are written in clear, straightforward language that both parties can understand.</p>
+                </div>
+                
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke="#4F46E5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Secure & Confidential</h3>
+                    <p>Your business information is encrypted and secure. We never share your data with third parties.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Sample Document Previews Section -->
+    <section class="document-previews">
+        <div class="container">
+            <h2 class="section-title">Sample Document Previews</h2>
+            <p class="section-subtitle">See the quality of our AI-generated legal documents</p>
+            
+            <div class="tabs">
+                <button class="tab-button active" data-tab="nda">Non-Disclosure Agreement</button>
+                <button class="tab-button" data-tab="terms">Terms of Service</button>
+                <button class="tab-button" data-tab="privacy">Privacy Policy</button>
+                <button class="tab-button" data-tab="freelance">Freelance Contract</button>
+            </div>
+            
+            <div class="tab-content active" id="nda-content">
+                <div class="document-preview">
+                    <div class="watermark">SAMPLE</div>
+                    <h3>NON-DISCLOSURE AGREEMENT</h3>
+                    <p>This Non-Disclosure Agreement (the "Agreement") is entered into by and between [Company Name], a [State] [Business Type] ("Disclosing Party") and the recipient identified below ("Receiving Party"), collectively referred to as the "Parties."</p>
+                    
+                    <h4>1. PURPOSE</h4>
+                    <p>The Parties wish to explore a potential business relationship in connection with [specific business purpose]. During this exploration, Disclosing Party may share certain proprietary and confidential information with Receiving Party. This Agreement is intended to prevent the unauthorized disclosure of Confidential Information.</p>
+                    
+                    <h4>2. DEFINITION OF CONFIDENTIAL INFORMATION</h4>
+                    <p>For purposes of this Agreement, "Confidential Information" includes all information or material that has or could have commercial value or other utility in the business in which Disclosing Party is engaged. If Confidential Information is in written form, the Disclosing Party shall label or stamp the materials with the word "Confidential" or some similar warning. If Confidential Information is transmitted orally, the Disclosing Party shall promptly provide a writing indicating that such oral communication constituted Confidential Information.</p>
+                    
+                    <h4>3. EXCLUSIONS FROM CONFIDENTIAL INFORMATION</h4>
+                    <p>Receiving Party's obligations under this Agreement do not extend to information that is: (a) publicly known at the time of disclosure or subsequently becomes publicly known through no fault of the Receiving Party; (b) discovered or created by the Receiving Party before disclosure by Disclosing Party; (c) learned by the Receiving Party through legitimate means other than from the Disclosing Party or Disclosing Party's representatives; or (d) is disclosed by Receiving Party with Disclosing Party's prior written approval.</p>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="terms-content">
+                <div class="document-preview">
+                    <div class="watermark">SAMPLE</div>
+                    <h3>TERMS OF SERVICE</h3>
+                    <p>These Terms of Service ("Terms") govern your access to and use of [Company Name]'s website, products, and services ("Services"). Please read these Terms carefully, and contact us if you have any questions.</p>
+                    
+                    <h4>1. ACCEPTANCE OF TERMS</h4>
+                    <p>By accessing or using our Services, you agree to be bound by these Terms and our Privacy Policy. If you do not agree to these Terms, you may not access or use the Services.</p>
+                    
+                    <h4>2. CHANGES TO TERMS OR SERVICES</h4>
+                    <p>We reserve the right to modify these Terms at any time. We will provide notice of any material changes by posting the new Terms on our site and updating the "Last Updated" date. Your continued use of the Services after such changes constitutes your acceptance of the new Terms.</p>
+                    
+                    <h4>3. USER ACCOUNTS</h4>
+                    <p>When you create an account with us, you must provide accurate, complete, and current information. You are responsible for safeguarding your account credentials and for all activities that occur under your account. You must notify us immediately of any unauthorized use of your account.</p>
+                    
+                    <h4>4. INTELLECTUAL PROPERTY RIGHTS</h4>
+                    <p>The Services and their contents, features, and functionality are owned by [Company Name] and are protected by copyright, trademark, and other intellectual property laws. You may not use our intellectual property without our prior written consent.</p>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="privacy-content">
+                <div class="document-preview">
+                    <div class="watermark">SAMPLE</div>
+                    <h3>PRIVACY POLICY</h3>
+                    <p>This Privacy Policy describes how [Company Name] ("we", "us", or "our") collects, uses, and shares information about you when you use our website, products, and services (collectively, the "Services").</p>
+                    
+                    <h4>1. INFORMATION WE COLLECT</h4>
+                    <p>We collect information you provide directly to us, such as when you create an account, fill out a form, or communicate with us. This may include your name, email address, postal address, phone number, and payment information.</p>
+                    
+                    <h4>2. HOW WE USE YOUR INFORMATION</h4>
+                    <p>We use the information we collect to provide, maintain, and improve our Services, to process transactions, to send you technical notices and support messages, to communicate with you about products, services, offers, and events, and for other purposes with your consent.</p>
+                    
+                    <h4>3. SHARING OF INFORMATION</h4>
+                    <p>We may share your information with third-party vendors, service providers, and other business partners who need access to such information to carry out work on our behalf. We may also share information in response to a legal request if we believe disclosure is required by law.</p>
+                    
+                    <h4>4. DATA SECURITY</h4>
+                    <p>We take reasonable measures to help protect information about you from loss, theft, misuse, unauthorized access, disclosure, alteration, and destruction. However, no security system is impenetrable, and we cannot guarantee the security of our systems.</p>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="freelance-content">
+                <div class="document-preview">
+                    <div class="watermark">SAMPLE</div>
+                    <h3>FREELANCE CONTRACT</h3>
+                    <p>This Freelance Contract ("Contract") is entered into by and between [Client Name], with a principal place of business at [Client Address] ("Client") and [Freelancer Name], with a principal place of business at [Freelancer Address] ("Freelancer").</p>
+                    
+                    <h4>1. SERVICES</h4>
+                    <p>Freelancer agrees to perform the following services for Client: [detailed description of services]. Freelancer shall complete the services according to the timeline and milestones set forth in Exhibit A, attached hereto and incorporated by reference.</p>
+                    
+                    <h4>2. COMPENSATION</h4>
+                    <p>Client agrees to pay Freelancer [rate/fee structure] for the services. Payment shall be made as follows: [payment schedule]. Client shall reimburse Freelancer for the following expenses: [list of reimbursable expenses, if any].</p>
+                    
+                    <h4>3. INTELLECTUAL PROPERTY RIGHTS</h4>
+                    <p>Upon receipt of full payment, Freelancer assigns to Client all right, title, and interest in the deliverables, including all intellectual property rights. Freelancer shall retain ownership of any pre-existing materials used in the deliverables.</p>
+                    
+                    <h4>4. INDEPENDENT CONTRACTOR STATUS</h4>
+                    <p>Freelancer is an independent contractor, not an employee of Client. Freelancer is responsible for all taxes, insurance, and benefits. Nothing in this Contract shall be construed as creating an employer-employee relationship.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Customer Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">What Our Customers Say</h2>
+            <p class="section-subtitle">Join thousands of satisfied business owners who trust InstantLegal AI</p>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="quote">"I needed an NDA urgently for a client meeting the next day. InstantLegal AI delivered a perfectly customized document in minutes. Saved me at least $400 in legal fees and the document was actually better than what my previous lawyer provided!"</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80');"></div>
+                        <div class="author-info">
+                            <h4>Michael Thompson</h4>
+                            <p>Marketing Agency Owner</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="quote">"As a startup founder, legal costs were eating into our budget. This service has been a game-changer - professional documents at a fraction of the cost and available instantly. The state-specific compliance was exactly what we needed."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar" style="background-image: url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80');"></div>
+                        <div class="author-info">
+                            <h4>Sarah Johnson</h4>
+                            <p>Tech Startup CEO</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="quote">"I was skeptical about AI-generated legal documents, but the quality exceeded my expectations. Clean, professional, and tailored specifically to my e-commerce business in California. I've now used it for 3 different documents - all perfect."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar" style="background-image: url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80');"></div>
+                        <div class="author-info">
+                            <h4>David Chen</h4>
+                            <p>E-commerce Entrepreneur</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Frequently Asked Questions Section -->
+    <section class="faq">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">Everything you need to know about our AI-generated legal documents</p>
+            
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Are these documents legally binding?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, our AI-generated documents are legally binding when properly executed by all parties. They are created using the same legal principles and requirements that attorneys use when drafting documents.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Is my information secure?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely. We use bank-level encryption to protect your data. We never share your information with third parties, and your documents are only accessible to you.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How quickly will I receive my document?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Most documents are generated within 2 minutes. Once generated, you can download them immediately.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What if I need a document type not listed?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Contact our support team, and we'll work to add your requested document type to our system. We're constantly expanding our document library based on customer needs.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Can I edit the document after receiving it?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, all documents are delivered in editable PDF format. You can make any necessary adjustments before finalizing.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Do I need a lawyer to review these documents?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>While our documents are legally sound, for complex situations or high-stakes agreements, we recommend having an attorney review the final document. Our service provides a professional starting point that can save significant legal costs.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What makes your AI-generated documents better than templates?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Unlike generic templates, our AI customizes each document to your specific business needs, industry requirements, and state laws. The documents are more comprehensive, relevant, and legally sound than one-size-fits-all templates.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What's included in the Money-Back Guarantee?</h3>
+                        <div class="faq-toggle">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>If you're not satisfied with your document for any reason, contact us within 30 days of purchase for a full refund. No questions asked.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    
+ 
+<footer>
+        <div class="container">
+            <div class="footer-content">
+                <div>
+                    <a href="#" class="footer-logo">Instant<span>Legal</span>AI</a>
+                    <p class="footer-description">AI-powered legal documents for modern businesses. Save time, reduce costs, and get the legal protection you need.</p>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title">Documents</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Non-Disclosure Agreement</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Freelance Contract</a></li>
+                        <li><a href="#">Employment Agreement</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title">Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">How It Works</a></li>
+                        <li><a href="#">Testimonials</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="footer-title">Legal</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">Disclaimer</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="trust-features">
+                <div class="feature-box">
+                    <div class="feature-icon">✓</div>
+                    <div class="feature-text">Secure Payment</div>
+                </div>
+                
+                <div class="feature-box">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-text">Privacy Protected</div>
+                </div>
+                
+                <div class="feature-box">
+                    <div class="feature-icon">⏰</div>
+                    <div class="feature-text">24/7 Support</div>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                © 2025 InstantLegal AI. All rights reserved.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
